@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('activity_logs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')
+                  ->nullable()
+                  ->constrained()
+                  ->onDelete('set null');
+            $table->foreignId('device_id')
+                  ->nullable()
+                  ->constrained()
+                  ->onDelete('set null');
+            $table->foreignId('session_id')
+                  ->nullable()
+                  ->constrained('class_sessions')
+                  ->onDelete('set null');
+            $table->string('action');         // e.g. 'session.started'
+            $table->text('description')->nullable();
+            $table->string('ip_address')->nullable();
+            $table->json('metadata')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('activity_logs');
+    }
+};
