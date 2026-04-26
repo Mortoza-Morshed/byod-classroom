@@ -12,24 +12,17 @@ class DeviceSeeder extends Seeder
     {
         $students = User::role('student')->get();
 
-        $deviceTypes = ['laptop', 'tablet', 'phone'];
-
-        $deviceNames = [
-            'laptop' => ["'s HP Laptop", "'s Dell Laptop", "'s Lenovo ThinkPad", "'s Acer Aspire"],
-            'tablet' => ["'s iPad", "'s Samsung Tab", "'s Lenovo Tab"],
-            'phone'  => ["'s iPhone", "'s Samsung Galaxy", "'s OnePlus", "'s Redmi"],
-        ];
+        $deviceNames = ["'s HP Laptop", "'s Dell Laptop", "'s Lenovo ThinkPad", "'s Acer Aspire", "'s MacBook Air"];
 
         foreach ($students as $student) {
-            $type = $deviceTypes[array_rand($deviceTypes)];
-            $suffix = $deviceNames[$type][array_rand($deviceNames[$type])];
+            $suffix = $deviceNames[array_rand($deviceNames)];
             $firstName = explode(' ', $student->name)[0];
 
             Device::create([
                 'user_id'       => $student->id,
                 'name'          => $firstName . $suffix,
                 'mac_address'   => $this->randomMac(),
-                'device_type'   => $type,
+                'device_type'   => 'laptop',
                 'status'        => 'approved', // pre-approved for dev
                 'registered_at' => now()->subDays(rand(1, 30)),
             ]);

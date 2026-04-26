@@ -1,3 +1,3 @@
-<div>
-    <!-- An unexamined life is not worth living. - Socrates -->
-</div>
+<x-layouts.student title="My Device">
+    <livewire:student.device-registration />
+</x-layouts.student>

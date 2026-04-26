@@ -1,3 +1,3 @@
-<div>
-    <!-- Simplicity is an acquired taste. - Katharine Gerould -->
-</div>
+<x-layouts.admin title="Device Management">
+    <livewire:admin.device-manager />
+</x-layouts.admin>

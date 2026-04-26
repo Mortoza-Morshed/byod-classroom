@@ -11,11 +11,12 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
         'name',
         'email',
+        'registration_id',
         'password',
         'avatar',
         'is_active',
@@ -30,8 +31,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'is_active'         => 'boolean',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -72,9 +73,9 @@ class User extends Authenticatable
     public function approvedDevice(): ?Device
     {
         return $this->devices()
-                    ->where('status', 'approved')
-                    ->latest()
-                    ->first();
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
     }
 
     public function isAdmin(): bool

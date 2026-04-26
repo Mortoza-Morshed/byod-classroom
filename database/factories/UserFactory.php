@@ -47,6 +47,17 @@ class UserFactory extends Factory
     }
 
     /**
+     * Indicate that the model is a student with an 8-digit registration ID.
+     * Format: 1230XXXX where XXXX is a zero-padded 4-digit number.
+     */
+    public function student(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'registration_id' => '1230'.str_pad(fake()->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
+        ]);
+    }
+
+    /**
      * Indicate that the model has two-factor authentication configured.
      */
     public function withTwoFactor(): static

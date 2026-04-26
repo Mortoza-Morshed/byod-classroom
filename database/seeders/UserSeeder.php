@@ -14,8 +14,8 @@ class UserSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@school.com'],
             [
-                'name'      => 'School Admin',
-                'password'  => Hash::make('password'),
+                'name' => 'School Admin',
+                'password' => Hash::make('password'),
                 'is_active' => true,
             ]
         );
@@ -32,8 +32,8 @@ class UserSeeder extends Seeder
             $teacher = User::firstOrCreate(
                 ['email' => $data['email']],
                 [
-                    'name'      => $data['name'],
-                    'password'  => Hash::make('password'),
+                    'name' => $data['name'],
+                    'password' => Hash::make('password'),
                     'is_active' => true,
                 ]
             );
@@ -50,16 +50,24 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($students as $index => $name) {
-            $email = strtolower(str_replace(' ', '.', $name)) . '@student.com';
+            $email = strtolower(str_replace(' ', '.', $name)).'@student.com';
+            $registrationId = '1230'.str_pad($index + 1, 4, '0', STR_PAD_LEFT);
 
             $student = User::firstOrCreate(
                 ['email' => $email],
                 [
-                    'name'      => $name,
-                    'password'  => Hash::make('password'),
+                    'name' => $name,
+                    'registration_id' => $registrationId,
+                    'password' => Hash::make('password'),
                     'is_active' => true,
                 ]
             );
+
+            // Backfill reg ID for existing records that don't have one yet
+            if (! $student->registration_id) {
+                $student->update(['registration_id' => $registrationId]);
+            }
+
             $student->assignRole('student');
         }
 
