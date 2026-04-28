@@ -1,3 +1,3 @@
-<div>
-    <!-- I begin to speak only when I am certain what I will say is not better left unsaid. - Cato the Younger -->
-</div>
+<x-layouts.teacher title="Classroom">
+    <livewire:teacher.classroom-show :classroom="$classroom" />
+</x-layouts.teacher>

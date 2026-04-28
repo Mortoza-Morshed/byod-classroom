@@ -88,13 +88,13 @@ Route::prefix('teacher')
             return view('pages.teacher.classrooms.create');
         })->name('classrooms.create');
 
-        Route::get('/classrooms/{classroom}', function () {
-            return view('pages.teacher.classrooms.show');
+        Route::get('/classrooms/{classroom}', function (App\Models\Classroom $classroom) {
+            return view('pages.teacher.classrooms.show', compact('classroom'));
         })->name('classrooms.show');
 
         // Sessions
-        Route::get('/classrooms/{classroom}/sessions/create', function () {
-            return view('pages.teacher.sessions.create');
+        Route::get('/classrooms/{classroom}/sessions/create', function (App\Models\Classroom $classroom) {
+            return view('pages.teacher.sessions.create', compact('classroom'));
         })->name('sessions.create');
 
         Route::get('/sessions/{session}/live', function () {
@@ -168,7 +168,8 @@ Route::prefix('api/session')
     ->group(function () {
 
         // Focus violation reporting (called by JS on tab switch)
-        Route::post('/violation', [SessionViolationController::class,
+        Route::post('/violation', [
+            SessionViolationController::class,
             'store'
         ])->name('violation');
 

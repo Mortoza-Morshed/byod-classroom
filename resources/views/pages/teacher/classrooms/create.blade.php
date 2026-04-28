@@ -1,3 +1,3 @@
-<div>
-    <!-- It is never too late to be what you might have been. - George Eliot -->
-</div>
+<x-layouts.teacher title="Create Classroom">
+    <livewire:teacher.classroom-create />
+</x-layouts.teacher>

@@ -24,7 +24,7 @@
                 <tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50">
                     <th class="text-left px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wide">Device</th>
                     <th class="text-left px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wide">Student</th>
-                    <th class="text-left px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wide">Reg ID</th>
+                    <th class="text-left px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wide">Type</th>
                     <th class="text-left px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wide">Status</th>
                     <th class="text-right px-5 py-3 text-xs font-medium text-zinc-500 uppercase tracking-wide">Actions</th>
                 </tr>
@@ -40,8 +40,8 @@
                         </td>
                         <td class="px-5 py-3 text-zinc-600 dark:text-zinc-300">{{ $device->user->name }}</td>
                         <td class="px-5 py-3">
-                            <span class="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-200">
-                                {{ $device->user->registration_id ?? '—' }}
+                            <span class="text-xs bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 px-2 py-0.5 rounded-full capitalize">
+                                {{ $device->device_type }}
                             </span>
                         </td>
                         <td class="px-5 py-3">

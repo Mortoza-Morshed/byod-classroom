@@ -1,3 +1,3 @@
-<div>
-    <!-- Very little is needed to make a happy life. - Marcus Aurelius -->
-</div>
+<x-layouts.teacher title="My Classrooms">
+    <livewire:teacher.classroom-index />
+</x-layouts.teacher>
