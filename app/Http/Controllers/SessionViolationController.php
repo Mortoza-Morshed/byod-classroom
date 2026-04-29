@@ -29,7 +29,7 @@ class SessionViolationController extends Controller
         }
 
         // Increment violation count on the pivot
-        $pivot = SessionDevice::where('session_id', $session->id)
+        $pivot = SessionDevice::query()->where('session_id', $session->id)
                               ->where('device_id', $device->id)
                               ->first();
 
@@ -70,7 +70,7 @@ class SessionViolationController extends Controller
             return response()->json(['is_locked' => false]);
         }
 
-        $pivot = SessionDevice::where('session_id', $session->id)
+        $pivot = SessionDevice::query()->where('session_id', $session->id)
                               ->where('device_id', $device->id)
                               ->first();
 

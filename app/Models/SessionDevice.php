@@ -57,7 +57,7 @@ class SessionDevice extends Model
 
     public function incrementViolation(): void
     {
-        $this->increment('violation_count');
+        $this->increment('violation_count', 1);
     }
 
     public function warningLevel(): int

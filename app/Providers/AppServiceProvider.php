@@ -21,10 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $roles = ['admin', 'teacher', 'student'];
-
-        foreach ($roles as $role) {
-            \Spatie\Permission\Models\Role::firstOrCreate(['name' => $role]);
-        }
+        // Role seeding is handled by Database\Seeders\RoleSeeder
     }
 }

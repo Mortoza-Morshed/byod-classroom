@@ -1,8 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionViolationController;
+use App\Models\Classroom;
+use App\Models\ClassSession;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Public routes
@@ -14,15 +17,22 @@ Route::get('/dev-logout', function () {
     Auth::logout();
     session()->invalidate();
     session()->regenerateToken();
+
     return redirect()->route('login');
 });
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect()->route(Auth::user()->getRoleNames()->first() . '.dashboard');
+        $role = Auth::user()->getRoleNames()->first() ?? 'student';
+        return redirect()->route($role.'.dashboard');
     }
+
     return redirect()->route('login');
 })->name('home');
+
+Route::get('/dashboard', function () {
+    return redirect()->route('home');
+})->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -88,21 +98,21 @@ Route::prefix('teacher')
             return view('pages.teacher.classrooms.create');
         })->name('classrooms.create');
 
-        Route::get('/classrooms/{classroom}', function (App\Models\Classroom $classroom) {
+        Route::get('/classrooms/{classroom}', function (Classroom $classroom) {
             return view('pages.teacher.classrooms.show', compact('classroom'));
         })->name('classrooms.show');
 
         // Sessions
-        Route::get('/classrooms/{classroom}/sessions/create', function (App\Models\Classroom $classroom) {
+        Route::get('/classrooms/{classroom}/sessions/create', function (Classroom $classroom) {
             return view('pages.teacher.sessions.create', compact('classroom'));
         })->name('sessions.create');
 
-        Route::get('/sessions/{session}/live', function () {
-            return view('pages.teacher.sessions.live');
+        Route::get('/sessions/{session}/live', function (ClassSession $session) {
+            return view('pages.teacher.sessions.live', compact('session'));
         })->name('sessions.live');
 
-        Route::get('/sessions/{session}/report', function () {
-            return view('pages.teacher.sessions.report');
+        Route::get('/sessions/{session}/report', function (ClassSession $session) {
+            return view('pages.teacher.sessions.report', compact('session'));
         })->name('sessions.report');
 
         // Devices
@@ -136,8 +146,8 @@ Route::prefix('student')
             return view('pages.student.classrooms.index');
         })->name('classrooms.index');
 
-        Route::get('/classrooms/{classroom}', function () {
-            return view('pages.student.classrooms.show');
+        Route::get('/classrooms/{classroom}', function (Classroom $classroom) {
+            return view('pages.student.classrooms.show', compact('classroom'));
         })->name('classrooms.show');
 
         // Join a classroom via code
@@ -146,8 +156,8 @@ Route::prefix('student')
         })->name('join');
 
         // Active session view
-        Route::get('/sessions/{session}/live', function () {
-            return view('pages.student.sessions.live');
+        Route::get('/sessions/{session}/live', function (ClassSession $session) {
+            return view('pages.student.sessions.live', compact('session'));
         })->name('sessions.live');
 
         // Device registration
@@ -170,13 +180,13 @@ Route::prefix('api/session')
         // Focus violation reporting (called by JS on tab switch)
         Route::post('/violation', [
             SessionViolationController::class,
-            'store'
+            'store',
         ])->name('violation');
 
         // Device lock status polling (called by student page)
         Route::get('/{session}/lock-status', [
             SessionViolationController::class,
-            'lockStatus'
+            'lockStatus',
         ])->name('lock-status');
     });
 
@@ -186,4 +196,5 @@ Route::prefix('api/session')
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
+require __DIR__.'/settings.php';

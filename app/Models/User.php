@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
 
     protected $fillable = [
         'name',
@@ -91,5 +92,14 @@ class User extends Authenticatable
     public function isStudent(): bool
     {
         return $this->hasRole('student');
+    }
+
+    // Get user initials for avatar fallback
+    public function initials(): string
+    {
+        return str($this->name)
+            ->explode(' ')
+            ->map(fn ($segment) => blank($segment) ? '' : mb_substr($segment, 0, 1))
+            ->join('');
     }
 }

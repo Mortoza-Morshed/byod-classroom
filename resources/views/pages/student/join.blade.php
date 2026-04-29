@@ -1,3 +1,3 @@
-<div>
-    <!-- It always seems impossible until it is done. - Nelson Mandela -->
-</div>
+<x-layouts.student title="Join Classroom">
+    <livewire:student.join-classroom />
+</x-layouts.student>

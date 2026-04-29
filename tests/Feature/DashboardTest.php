@@ -3,14 +3,20 @@
 use App\Models\User;
 
 test('guests are redirected to the login page', function () {
-    $response = $this->get(route('dashboard'));
+    /** @var \Tests\TestCase $this */
+    $response = $this->get(route('home'));
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated users can visit the dashboard', function () {
+test('authenticated users are redirected to their role dashboard', function () {
+    /** @var \Tests\TestCase $this */
+    /** @var \App\Models\User $user */
     $user = User::factory()->create();
+    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'student']);
+    // Assign student role to the user so the fallback works cleanly
+    $user->assignRole('student');
     $this->actingAs($user);
 
-    $response = $this->get(route('dashboard'));
-    $response->assertOk();
+    $response = $this->get(route('home'));
+    $response->assertRedirect(route('student.dashboard'));
 });
