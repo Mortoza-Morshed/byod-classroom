@@ -1,3 +1,3 @@
-<div>
-    <!-- Simplicity is the essence of happiness. - Cedric Bledsoe -->
-</div>
+<x-layouts.teacher title="Live Session">
+    <livewire:teacher.live-session :session="$session" />
+</x-layouts.teacher>
