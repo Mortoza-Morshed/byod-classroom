@@ -1,3 +1,3 @@
-<div>
-    <!-- Walk as if you are kissing the Earth with your feet. - Thich Nhat Hanh -->
-</div>
+<x-layouts.teacher title="Policies — {{ $classroom->name }}">
+    <livewire:teacher.policy-manager :classroom="$classroom" />
+</x-layouts.teacher>

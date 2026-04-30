@@ -24,6 +24,7 @@ Route::get('/dev-logout', function () {
 Route::get('/', function () {
     if (Auth::check()) {
         $role = Auth::user()->getRoleNames()->first() ?? 'student';
+
         return redirect()->route($role.'.dashboard');
     }
 
@@ -121,8 +122,8 @@ Route::prefix('teacher')
         })->name('devices.index');
 
         // Policies
-        Route::get('/classrooms/{classroom}/policies', function () {
-            return view('pages.teacher.policies.index');
+        Route::get('/classrooms/{classroom}/policies', function (Classroom $classroom) {
+            return view('pages.teacher.policies.index', compact('classroom'));
         })->name('policies.index');
     });
 

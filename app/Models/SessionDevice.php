@@ -24,9 +24,9 @@ class SessionDevice extends Model
     protected function casts(): array
     {
         return [
-            'joined_at'       => 'datetime',
-            'left_at'         => 'datetime',
-            'is_locked'       => 'boolean',
+            'joined_at' => 'datetime',
+            'left_at' => 'datetime',
+            'is_locked' => 'boolean',
             'violation_count' => 'integer',
         ];
     }
@@ -47,12 +47,14 @@ class SessionDevice extends Model
 
     public function lock(): void
     {
-        $this->update(['is_locked' => true]);
+        $this->is_locked = true;
+        $this->save();
     }
 
     public function unlock(): void
     {
-        $this->update(['is_locked' => false]);
+        $this->is_locked = false;
+        $this->save();
     }
 
     public function incrementViolation(): void
@@ -62,11 +64,11 @@ class SessionDevice extends Model
 
     public function warningLevel(): int
     {
-        return match(true) {
+        return match (true) {
             $this->violation_count >= 3 => 3,
             $this->violation_count === 2 => 2,
             $this->violation_count === 1 => 1,
-            default                      => 0,
+            default => 0,
         };
     }
 }
