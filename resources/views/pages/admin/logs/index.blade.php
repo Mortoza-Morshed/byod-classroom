@@ -1,3 +1,3 @@
-<div>
-    <!-- The biggest battle is the war against ignorance. - Mustafa Kemal Atatürk -->
-</div>
+<x-layouts.admin title="Audit Logs">
+    <livewire:admin.activity-log-viewer />
+</x-layouts.admin>
