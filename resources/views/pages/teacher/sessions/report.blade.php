@@ -1,3 +1,3 @@
-<div>
-    <!-- Simplicity is the ultimate sophistication. - Leonardo da Vinci -->
-</div>
+<x-layouts.teacher title="Session Report">
+    <livewire:teacher.session-report :session="$session" />
+</x-layouts.teacher>

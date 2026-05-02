@@ -9,9 +9,13 @@ use App\Models\SessionDevice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
 class LiveSession extends Component
 {
+    use WithFileUploads;
+
     public ClassSession $session;
 
     public bool $showResourceForm = false;
@@ -21,6 +25,9 @@ class LiveSession extends Component
     public string $resourceUrl = '';
 
     public string $resourceType = 'link';
+
+    /** @var TemporaryUploadedFile|null */
+    public $resourceFile = null;
 
     public string $announcement = '';
 
@@ -117,6 +124,40 @@ class LiveSession extends Component
 
     public function shareResource(): void
     {
+        if ($this->resourceType === 'file') {
+            $this->validate([
+                'resourceTitle' => 'required|string|min:2',
+                'resourceFile' => 'required|file|mimes:pdf|max:10240',
+            ]);
+
+            $path = $this->resourceFile->store('session-resources', 'public');
+
+            Resource::create([
+                'session_id' => $this->session->id,
+                'teacher_id' => Auth::id(),
+                'title' => $this->resourceTitle,
+                'type' => 'file',
+                'file_path' => $path,
+                'rendering_mode' => 'pdfjs',
+                'url' => null,
+            ]);
+
+            ActivityLog::record(
+                action: 'resource.shared',
+                description: "Shared PDF: {$this->resourceTitle}",
+                userId: Auth::id(),
+                sessionId: $this->session->id,
+                metadata: ['type' => 'pdf', 'title' => $this->resourceTitle],
+            );
+
+            $this->resourceTitle = '';
+            $this->resourceFile = null;
+            $this->showResourceForm = false;
+
+            return;
+        }
+
+        // Link mode
         $this->validate([
             'resourceTitle' => 'required|string|min:2',
             'resourceUrl' => 'required|url',

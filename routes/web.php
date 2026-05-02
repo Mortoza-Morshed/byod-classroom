@@ -3,6 +3,7 @@
 use App\Http\Controllers\SessionViolationController;
 use App\Models\Classroom;
 use App\Models\ClassSession;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -55,8 +56,8 @@ Route::prefix('admin')
             return view('pages.admin.users.index');
         })->name('users.index');
 
-        Route::get('/users/{user}', function () {
-            return view('pages.admin.users.show');
+        Route::get('/users/{user}', function (User $user) {
+            return view('pages.admin.users.show', compact('user'));
         })->name('users.show');
 
         // Device management

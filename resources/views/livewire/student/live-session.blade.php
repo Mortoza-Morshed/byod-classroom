@@ -226,15 +226,78 @@
                                     loading="lazy"
                                 ></iframe>
                             </div>
-                        @else
-                            {{-- pdfjs / file fallback --}}
-                            <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
-                                <iframe
-                                    src="{{ $activeResource->accessUrl() }}"
-                                    class="h-[600px] w-full"
-                                    loading="lazy"
-                                ></iframe>
+                        @elseif ($activeResource->rendering_mode === 'pdfjs')
+                            {{-- PDF.js canvas viewer with page navigation --}}
+                            <div
+                                x-data="{
+                                    pdfDoc: null,
+                                    currentPage: 1,
+                                    totalPages: 0,
+                                    rendering: false,
+                                    async init() {
+                                        const url = @js($activeResource->accessUrl());
+                                        pdfjsLib.GlobalWorkerOptions.workerSrc =
+                                            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+                                        this.pdfDoc = await pdfjsLib.getDocument(url).promise;
+                                        this.totalPages = this.pdfDoc.numPages;
+                                        this.renderPage(this.currentPage);
+                                    },
+                                    async renderPage(num) {
+                                        if (this.rendering) return;
+                                        this.rendering = true;
+                                        const page = await this.pdfDoc.getPage(num);
+                                        const canvas = this.$refs.pdfCanvas;
+                                        const viewport = page.getViewport({ scale: 1.5 });
+                                        canvas.height = viewport.height;
+                                        canvas.width  = viewport.width;
+                                        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                                        this.rendering = false;
+                                    },
+                                    prevPage() {
+                                        if (this.currentPage <= 1) return;
+                                        this.currentPage--;
+                                        this.renderPage(this.currentPage);
+                                    },
+                                    nextPage() {
+                                        if (this.currentPage >= this.totalPages) return;
+                                        this.currentPage++;
+                                        this.renderPage(this.currentPage);
+                                    },
+                                }"
+                                class="space-y-3"
+                            >
+                                <div class="overflow-auto rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800">
+                                    <canvas x-ref="pdfCanvas" class="mx-auto block"></canvas>
+                                </div>
+                                <div class="flex items-center justify-between rounded-lg border border-zinc-100 bg-zinc-50 px-4 py-2 dark:border-zinc-800 dark:bg-zinc-800">
+                                    <button
+                                        x-on:click="prevPage()"
+                                        :disabled="currentPage <= 1"
+                                        class="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                                    >
+                                        <flux:icon.chevron-left class="h-3.5 w-3.5" /> Prev
+                                    </button>
+                                    <span class="text-xs text-zinc-500">
+                                        Page <span x-text="currentPage" class="font-semibold text-zinc-800 dark:text-zinc-200"></span>
+                                        of <span x-text="totalPages" class="font-semibold text-zinc-800 dark:text-zinc-200"></span>
+                                    </span>
+                                    <button
+                                        x-on:click="nextPage()"
+                                        :disabled="currentPage >= totalPages"
+                                        class="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-200 disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                                    >
+                                        Next <flux:icon.chevron-right class="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
                             </div>
+
+                            {{-- PDF.js loaded once per page --}}
+                            @once
+                                <script type="module">
+                                    import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
+                                    window.pdfjsLib = pdfjsLib;
+                                </script>
+                            @endonce
                         @endif
                     </div>
                 @endif

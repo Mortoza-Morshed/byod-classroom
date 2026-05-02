@@ -211,25 +211,97 @@
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Share Resource</h2>
                     @if (! $showResourceForm)
-                        <flux:button wire:click="$set('showResourceForm', true)" size="sm" variant="ghost" icon="plus">Share Link</flux:button>
+                        <flux:button wire:click="$set('showResourceForm', true)" size="sm" variant="ghost" icon="plus">Share</flux:button>
                     @endif
                 </div>
 
                 @if ($showResourceForm)
+                    {{-- Mode tabs --}}
+                    <div class="mt-3 flex rounded-lg border border-zinc-200 p-0.5 dark:border-zinc-700">
+                        <button
+                            type="button"
+                            wire:click="$set('resourceType', 'link')"
+                            @class([
+                                'flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition',
+                                'bg-emerald-600 text-white shadow-sm' => $resourceType === 'link',
+                                'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300' => $resourceType !== 'link',
+                            ])
+                        >Share Link</button>
+                        <button
+                            type="button"
+                            wire:click="$set('resourceType', 'file')"
+                            @class([
+                                'flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition',
+                                'bg-emerald-600 text-white shadow-sm' => $resourceType === 'file',
+                                'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300' => $resourceType !== 'file',
+                            ])
+                        >Upload PDF</button>
+                    </div>
+
                     <form wire:submit="shareResource" class="mt-3 space-y-3">
+                        {{-- Title (shared by both modes) --}}
                         <flux:field>
                             <flux:label>Title</flux:label>
                             <flux:input wire:model="resourceTitle" placeholder="e.g. Chapter 5 Notes" required />
                             <flux:error name="resourceTitle" />
                         </flux:field>
-                        <flux:field>
-                            <flux:label>URL</flux:label>
-                            <flux:input wire:model="resourceUrl" type="url" placeholder="https://…" required />
-                            <flux:description>Google/YouTube links will open externally.</flux:description>
-                            <flux:error name="resourceUrl" />
-                        </flux:field>
+
+                        @if ($resourceType === 'link')
+                            <flux:field>
+                                <flux:label>URL</flux:label>
+                                <flux:input wire:model="resourceUrl" type="url" placeholder="https://…" required />
+                                <flux:description>Google/YouTube links will open externally.</flux:description>
+                                <flux:error name="resourceUrl" />
+                            </flux:field>
+                        @else
+                            {{-- File upload mode --}}
+                            <div
+                                x-data="{
+                                    fileName: null,
+                                    progress: 0,
+                                    uploading: false,
+                                }"
+                                x-on:livewire-upload-start="uploading = true; progress = 0"
+                                x-on:livewire-upload-finish="uploading = false"
+                                x-on:livewire-upload-error="uploading = false"
+                                x-on:livewire-upload-progress="progress = $event.detail.progress"
+                            >
+                                <label class="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50 px-4 py-6 text-center transition hover:border-emerald-400 hover:bg-emerald-50/30 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-emerald-600 dark:hover:bg-emerald-900/10 cursor-pointer">
+                                    <flux:icon.document-arrow-up class="h-8 w-8 text-zinc-400" />
+                                    <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                        <span x-show="!fileName">Click to select a PDF file</span>
+                                        <span x-show="fileName" x-text="fileName" class="font-medium text-emerald-600 dark:text-emerald-400"></span>
+                                    </span>
+                                    <span class="text-[10px] text-zinc-400">PDF only · max 10 MB</span>
+                                    <input
+                                        type="file"
+                                        wire:model="resourceFile"
+                                        accept=".pdf,application/pdf"
+                                        class="sr-only"
+                                        x-on:change="fileName = $event.target.files[0]?.name ?? null"
+                                    />
+                                </label>
+
+                                {{-- Upload progress bar --}}
+                                <div x-show="uploading" class="mt-2">
+                                    <div class="flex items-center justify-between text-xs text-zinc-500 mb-1">
+                                        <span>Uploading…</span>
+                                        <span x-text="progress + '%'"></span>
+                                    </div>
+                                    <div class="h-1.5 w-full rounded-full bg-zinc-200 dark:bg-zinc-700">
+                                        <div
+                                            class="h-1.5 rounded-full bg-emerald-600 transition-all"
+                                            :style="'width: ' + progress + '%'"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <flux:error name="resourceFile" class="mt-1" />
+                            </div>
+                        @endif
+
                         <div class="flex gap-2">
-                            <flux:button type="submit" variant="primary" size="sm">Share</flux:button>
+                            <flux:button type="submit" variant="primary" size="sm" icon="share">Share</flux:button>
                             <flux:button type="button" wire:click="$set('showResourceForm', false)" variant="ghost" size="sm">Cancel</flux:button>
                         </div>
                     </form>
