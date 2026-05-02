@@ -34,7 +34,7 @@
                     </a>
                     <button
                         wire:click="endSession({{ $activeSession->id }})"
-                        wire:confirm="End the current session?"
+                        wire:confirm="End the session for all connected students?"
                         class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
                         End Session
                     </button>
@@ -118,33 +118,20 @@
                             </div>
                         </div>
 
-                        @if($confirmRemoveStudent === $student->id)
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs text-zinc-500">Remove?</span>
-                                <button wire:click="removeStudent({{ $student->id }})"
-                                    class="text-xs bg-red-600 text-white px-2 py-1 rounded transition-colors">
-                                    Yes
-                                </button>
-                                <button wire:click="$set('confirmRemoveStudent', null)"
-                                    class="text-xs text-zinc-500 hover:text-zinc-700 px-2 py-1">
-                                    No
-                                </button>
-                            </div>
-                        @else
                             <button
-                                wire:click="$set('confirmRemoveStudent', {{ $student->id }})"
+                                wire:click="removeStudent({{ $student->id }})"
+                                wire:confirm="Remove this student from the classroom?"
                                 class="text-xs text-zinc-400 hover:text-red-500 transition-colors p-1">
                                 <flux:icon.x-mark class="w-4 h-4" />
                             </button>
-                        @endif
                     </div>
                 @empty
-                    <div class="px-5 py-8 text-center text-sm text-zinc-400">
-                        No students enrolled yet. Share the join code
-                        <span class="font-mono font-semibold text-zinc-600 dark:text-zinc-300">
-                            {{ $classroom->join_code }}
-                        </span>
-                        with your students.
+                    <div class="px-5 py-12 text-center">
+                        <div class="rounded-full bg-zinc-100 p-3 dark:bg-zinc-800 inline-block mb-3">
+                            <flux:icon.users class="h-6 w-6 text-zinc-400 dark:text-zinc-500" />
+                        </div>
+                        <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100">No students enrolled</p>
+                        <p class="mt-1 text-xs text-zinc-500">Share the join code <span class="font-mono font-semibold text-zinc-600 dark:text-zinc-300">{{ $classroom->join_code }}</span> with your students.</p>
                     </div>
                 @endforelse
             </div>
@@ -179,8 +166,12 @@
                             </p>
                         </div>
                     @empty
-                        <div class="px-5 py-6 text-center text-xs text-zinc-400">
-                            No sessions yet
+                        <div class="px-5 py-8 text-center">
+                            <div class="rounded-full bg-zinc-100 p-2 dark:bg-zinc-800 inline-block mb-2">
+                                <flux:icon.video-camera class="h-5 w-5 text-zinc-400 dark:text-zinc-500" />
+                            </div>
+                            <p class="text-xs font-medium text-zinc-900 dark:text-zinc-100">No sessions yet</p>
+                            <p class="mt-0.5 text-xs text-zinc-500">Start your first session.</p>
                         </div>
                     @endforelse
                 </div>

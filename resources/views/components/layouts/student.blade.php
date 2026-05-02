@@ -20,7 +20,7 @@
             </flux:navlist.item>
 
             <flux:navlist.group heading="My Learning" class="mt-4">
-                <flux:navlist.item icon="building-library" href="{{ route('student.classrooms.index') }}" :current="request()->routeIs('student.classrooms.*')">
+                <flux:navlist.item icon="building-library" href="{{ route('student.classrooms.index') }}" :current="request()->routeIs(['student.classrooms.*', 'student.sessions.*'])">
                     My Classrooms
                 </flux:navlist.item>
                 <flux:navlist.item icon="plus-circle" href="{{ route('student.join') }}" :current="request()->routeIs('student.join')">
@@ -59,6 +59,8 @@
         <div class="px-6 pb-6">
             {{ $slot }}
         </div>
+        
+        <x-flash />
     </flux:main>
 
 </x-layouts.app>

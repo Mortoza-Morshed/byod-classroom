@@ -16,8 +16,6 @@ class ClassroomShow extends Component
   public bool $showSessionForm = false;
   public string $sessionTitle = '';
 
-  // Student removal confirmation
-  public ?int $confirmRemoveStudent = null;
 
   public function mount(Classroom $classroom): void
   {
@@ -87,7 +85,7 @@ class ClassroomShow extends Component
       description: "Student removed from {$this->classroom->name}: {$student?->name}",
     );
 
-    $this->confirmRemoveStudent = null;
+    $this->dispatch('notify', message: "Student removed.", type: 'success');
   }
 
   public function render()

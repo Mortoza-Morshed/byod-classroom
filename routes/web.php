@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SessionViolationController;
+use App\Http\Controllers\Teacher\SessionReportController;
 use App\Models\Classroom;
 use App\Models\ClassSession;
 use App\Models\User;
@@ -116,6 +117,10 @@ Route::prefix('teacher')
         Route::get('/sessions/{session}/report', function (ClassSession $session) {
             return view('pages.teacher.sessions.report', compact('session'));
         })->name('sessions.report');
+
+        Route::get('/sessions/{session}/report/pdf',
+            [SessionReportController::class, 'exportPdf']
+        )->name('sessions.report.pdf');
 
         // Devices
         Route::get('/devices', function () {

@@ -82,7 +82,7 @@
     </div>
 
     {{-- ── 3. Data Table ───────────────────────────────────────────── --}}
-    <div class="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
+    <div wire:loading.class="opacity-50" class="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800 transition-opacity duration-300">
         <table class="w-full text-left text-sm">
             <thead>
                 <tr class="border-b border-zinc-200 bg-zinc-50 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-400">
@@ -180,8 +180,17 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-4 py-12 text-center text-sm text-zinc-400">
-                            No audit logs found matching your filters.
+                        <td colspan="7" class="px-4 py-16">
+                            <div class="flex flex-col items-center justify-center text-center">
+                                <div class="rounded-full bg-zinc-100 p-3 dark:bg-zinc-800">
+                                    <flux:icon.clipboard-document-list class="h-6 w-6 text-zinc-400 dark:text-zinc-500" />
+                                </div>
+                                <p class="mt-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">No logs found</p>
+                                <p class="mt-1 text-xs text-zinc-500">No audit logs match your current filters.</p>
+                                @if($search || $filterAction !== 'all' || $dateFrom || $dateTo)
+                                    <button wire:click="resetFilters" class="mt-4 text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">Clear filters</button>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @endforelse

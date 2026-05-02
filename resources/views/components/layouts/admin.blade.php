@@ -68,6 +68,8 @@ use Livewire\Volt\Volt;
         <div class="px-6 pb-6">
             {{ $slot }}
         </div>
+        
+        <x-flash />
     </flux:main>
 
 </x-layouts.app>

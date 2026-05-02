@@ -26,7 +26,7 @@
     </div>
 
     {{-- Device table --}}
-    <div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+    <div wire:loading.class="opacity-50" class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden transition-opacity duration-300">
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50">
@@ -81,7 +81,7 @@
                                 @if($device->status !== 'blocked')
                                     <button
                                         wire:click="block({{ $device->id }})"
-                                        wire:confirm="Block this device?"
+                                        wire:confirm="Block this device? The student will lose session access."
                                         class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg transition-colors"
                                     >
                                         Block
@@ -92,8 +92,17 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-5 py-10 text-center text-sm text-zinc-400">
-                            No devices found
+                        <td colspan="6" class="px-5 py-16">
+                            <div class="flex flex-col items-center justify-center text-center">
+                                <div class="rounded-full bg-zinc-100 p-3 dark:bg-zinc-800">
+                                    <flux:icon.device-phone-mobile class="h-6 w-6 text-zinc-400 dark:text-zinc-500" />
+                                </div>
+                                <p class="mt-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">No devices found</p>
+                                <p class="mt-1 text-xs text-zinc-500">No devices match your current filters.</p>
+                                @if($search || $filterStatus !== 'all')
+                                    <button wire:click="$set('search', ''); $set('filterStatus', 'all')" class="mt-4 text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">Clear filters</button>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @endforelse

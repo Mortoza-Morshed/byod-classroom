@@ -21,12 +21,23 @@
                 </p>
             </div>
 
-            <flux:button
-                href="{{ route('teacher.classrooms.show', $session->classroom_id) }}"
-                variant="ghost"
-                size="sm"
-                icon="arrow-left"
-            >Back to Classroom</flux:button>
+            <div class="flex items-center gap-3">
+                <a 
+                    href="{{ route('teacher.sessions.report.pdf', $session) }}"
+                    target="_blank"
+                    class="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                >
+                    <flux:icon.arrow-down-tray class="h-4 w-4" />
+                    Download PDF
+                </a>
+                
+                <flux:button
+                    href="{{ route('teacher.classrooms.show', $session->classroom_id) }}"
+                    variant="ghost"
+                    size="sm"
+                    icon="arrow-left"
+                >Back to Classroom</flux:button>
+            </div>
         </div>
 
         <div class="mt-5 grid grid-cols-2 gap-x-8 gap-y-2 border-t border-zinc-100 pt-4 text-sm dark:border-zinc-800 sm:grid-cols-3">
