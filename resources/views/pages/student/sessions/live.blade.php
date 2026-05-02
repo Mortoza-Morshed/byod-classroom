@@ -1,3 +1,3 @@
-<div>
-    <!-- The biggest battle is the war against ignorance. - Mustafa Kemal Atatürk -->
-</div>
+<x-layouts.student title="Live Session">
+    <livewire:student.live-session :session="$session" />
+</x-layouts.student>
