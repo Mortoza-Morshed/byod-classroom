@@ -54,7 +54,7 @@ class ReportsOverview extends Component
         $endedSessions = $endedSessionsQuery->get(['started_at', 'ended_at']);
         $totalActiveTimeMinutes = $endedSessions->reduce(function ($carry, $session) {
             if ($session->started_at && $session->ended_at) {
-                return $carry + $session->started_at->diffInMinutes($session->ended_at);
+                return $carry + round($session->started_at->diffInMinutes($session->ended_at));
             }
 
             return $carry;

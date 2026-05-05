@@ -235,7 +235,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <a 
-                                    href="{{ route('sessions.report', $session) }}"
+                                    href="{{ route('teacher.sessions.report', $session) }}"
                                     class="inline-flex items-center rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700"
                                 >
                                     View Report

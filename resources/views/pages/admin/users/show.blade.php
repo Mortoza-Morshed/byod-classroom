@@ -1,3 +1,3 @@
-<x-layouts.admin title="User Details">
+<x-layouts.admin title="User Profile">
     <livewire:admin.user-show :user="$user" />
 </x-layouts.admin>

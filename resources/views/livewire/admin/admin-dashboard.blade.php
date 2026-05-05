@@ -116,7 +116,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-zinc-600 dark:text-zinc-300">{{ $session->started_at->format('g:i A') }}</div>
-                                    <div class="text-xs text-emerald-600 dark:text-emerald-400">{{ now()->diffInMinutes($session->started_at) }} mins ago</div>
+                                    <div class="text-xs text-emerald-600 dark:text-emerald-400">{{ round(abs(now()->diffInMinutes($session->started_at))) }} mins ago</div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <span class="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300">

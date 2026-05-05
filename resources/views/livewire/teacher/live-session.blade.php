@@ -1,4 +1,4 @@
-<div wire:poll.5s class="space-y-6">
+<div wire:poll.5s class="flex flex-col space-y-6 -mt-2 -mb-6">
 
     {{-- Flash messages --}}
     @if (session('message'))
@@ -11,7 +11,7 @@
     {{-- ══════════════════════════════════════════════════════════════ --}}
     {{-- Top Bar --}}
     {{-- ══════════════════════════════════════════════════════════════ --}}
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+    <div class="shrink-0 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
         <div class="space-y-0.5">
             <div class="flex items-center gap-3">
                 <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">{{ $session->title }}</h1>
@@ -51,12 +51,12 @@
     </div>
 
     {{-- ══════════════════════════════════════════════════════════════ --}}
-    {{-- Main grid --}}
+    {{-- Main Content --}}
     {{-- ══════════════════════════════════════════════════════════════ --}}
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
 
-        {{-- ─── LEFT COLUMN ─────────────────────────────────────────── --}}
-        <div class="space-y-6 lg:col-span-2">
+        {{-- ─── LEFT COLUMN — Status + Devices ─────────────────────── --}}
+        <div class="lg:col-span-2 flex flex-col gap-4 pb-6">
 
             {{-- Stats row --}}
             <div class="grid grid-cols-3 gap-4">
@@ -144,7 +144,7 @@
                         <p class="text-sm text-zinc-500">No devices connected yet.</p>
                     </div>
                 @else
-                    <div class="grid gap-3 sm:grid-cols-2">
+                    <div class="grid gap-3 sm:grid-cols-2 max-h-96 overflow-y-auto pr-2 pb-2">
                         @foreach ($sessionDevices as $sd)
                             @php
                                 $violations = $sd->violation_count;
@@ -203,8 +203,8 @@
 
         </div>{{-- /left column --}}
 
-        {{-- ─── RIGHT COLUMN ────────────────────────────────────────── --}}
-        <div class="space-y-6">
+        {{-- ─── RIGHT COLUMN — Announcements + Resources ───────────── --}}
+        <div class="flex flex-col gap-4 sticky top-6 max-h-[calc(100vh-120px)] overflow-y-auto pr-2 pb-6">
 
             {{-- Share Resource Panel --}}
             <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
@@ -329,7 +329,7 @@
             {{-- Live activity feed --}}
             <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
                 <h2 class="mb-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300">Live Activity Feed</h2>
-                <div class="space-y-2 max-h-96 overflow-y-auto pr-1">
+                <div class="space-y-2 max-h-80 overflow-y-auto pr-1">
                     @forelse ($activityLogs as $log)
                         @php
                             $actionColor = match(true) {

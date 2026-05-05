@@ -52,12 +52,11 @@ Route::prefix('admin')
             return view('pages.admin.dashboard');
         })->name('dashboard');
 
-        // User management
         Route::get('/users', function () {
             return view('pages.admin.users.index');
         })->name('users.index');
 
-        Route::get('/users/{user}', function (User $user) {
+        Route::get('/users/{user}', function (\App\Models\User $user) {
             return view('pages.admin.users.show', compact('user'));
         })->name('users.show');
 
@@ -85,7 +84,7 @@ Route::prefix('admin')
 
 Route::prefix('teacher')
     ->name('teacher.')
-    ->middleware(['auth', 'role:teacher'])
+    ->middleware(['auth', 'role:teacher|admin'])
     ->group(function () {
 
         Route::get('/dashboard', function () {

@@ -1,4 +1,4 @@
-<div id="session-workspace" wire:poll.3s="checkSession" class="relative min-h-screen space-y-0" x-data x-on:session-ended.window="window.location.href='{{ route('student.dashboard') }}'">
+<div id="session-workspace" wire:poll.3s="checkSession" class="relative flex flex-col space-y-0 -mt-2 -mb-6" x-data x-on:session-ended.window="window.location.href='{{ route('student.dashboard') }}'">
     {{-- ══════════════════════════════════════════════════════════ --}}
     {{-- Locked Device Overlay --}}
     {{-- ══════════════════════════════════════════════════════════ --}}
@@ -42,7 +42,7 @@
     {{-- ══════════════════════════════════════════════════════════ --}}
     {{-- Top Bar --}}
     {{-- ══════════════════════════════════════════════════════════ --}}
-    <div class="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/95">
+    <div class="shrink-0 sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/95">
         <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-3">
                 {{-- Pulsing green LIVE badge --}}
@@ -155,11 +155,11 @@
     {{-- ══════════════════════════════════════════════════════════ --}}
     {{-- Main Content --}}
     {{-- ══════════════════════════════════════════════════════════ --}}
-    <div class="mx-auto max-w-7xl px-4 py-6">
+    <div class="mx-auto w-full max-w-7xl px-4 pt-6 pb-2">
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
             {{-- ─── LEFT COLUMN — Resources + Viewer (wide) ──────── --}}
-            <div class="space-y-6 lg:col-span-2">
+            <div class="lg:col-span-2 flex flex-col gap-4 pb-6">
 
                 {{-- Shared Resources list --}}
                 <div class="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
@@ -252,7 +252,7 @@
             </div>{{-- /left column --}}
 
             {{-- ─── RIGHT COLUMN — Announcements + Status (narrow) ── --}}
-            <div class="space-y-6">
+            <div class="flex flex-col gap-4 sticky top-6 max-h-[calc(100vh-120px)] overflow-y-auto pr-2 pb-6">
 
                 {{-- Announcements --}}
                 <div class="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
@@ -263,7 +263,7 @@
                     @if ($announcements->isEmpty())
                         <p class="py-4 text-center text-xs text-zinc-400">No announcements yet.</p>
                     @else
-                        <div class="space-y-3">
+                        <div class="space-y-3 max-h-80 overflow-y-auto pr-1">
                             @foreach ($announcements as $log)
                                 <div class="rounded-lg border border-sky-100 bg-sky-50 px-4 py-3 dark:border-sky-900/40 dark:bg-sky-900/10">
                                     <p class="text-sm text-zinc-800 dark:text-zinc-200">
