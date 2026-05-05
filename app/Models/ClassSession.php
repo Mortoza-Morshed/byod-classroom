@@ -94,7 +94,13 @@ class ClassSession extends Model
         if (!$this->started_at) return null;
 
         $end = $this->ended_at ?? now();
-        $mins = $this->started_at->diffInMinutes($end);
+        $secs = $this->started_at->diffInSeconds($end);
+
+        if ($secs < 60) {
+            return "{$secs}s";
+        }
+
+        $mins = (int) floor($secs / 60);
 
         return $mins < 60
             ? "{$mins}m"
