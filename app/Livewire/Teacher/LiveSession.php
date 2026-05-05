@@ -56,12 +56,14 @@ class LiveSession extends Component
 
         ActivityLog::record(
             action: 'session.ended',
-            description: "Session ended: {$this->session->title}",
+            description: "Session manually ended by {$this->session->classroom->teacher->name}.",
             userId: Auth::id(),
             sessionId: $this->session->id,
         );
 
-        $this->redirect(route('teacher.sessions.report', $this->session));
+        $this->dispatch('session-ended');
+
+        $this->redirectRoute('teacher.sessions.report', $this->session->id, navigate: true);
     }
 
     public function lockAll(): void

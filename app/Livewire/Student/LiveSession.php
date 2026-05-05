@@ -14,7 +14,9 @@ use Livewire\Component;
 
 class LiveSession extends Component
 {
-    public ClassSession $session;
+    public ClassSession $classSession;
+
+    public bool $sessionEnded = false;
 
     public ?SessionDevice $sessionDevice = null;
 
@@ -26,22 +28,22 @@ class LiveSession extends Component
 
     public int $focusPausedSeconds = 0;
 
-    public function mount(ClassSession $session): void
+    public function mount(ClassSession $classSession): void
     {
         /** @var User $user */
         $user = Auth::user();
 
         // Verify enrollment
         abort_unless(
-            $user->enrolledClassrooms()->where('classroom_id', $session->classroom_id)->exists(),
+            $user->enrolledClassrooms()->where('classroom_id', $classSession->classroom_id)->exists(),
             403,
             'You are not enrolled in this classroom.'
         );
 
         // If session has ended, redirect back to classroom
-        if ($session->isEnded()) {
+        if ($classSession->isEnded()) {
             session()->flash('message', 'Session has ended.');
-            $this->redirect(route('student.classrooms.show', $session->classroom_id));
+            $this->redirect(route('student.classrooms.show', $classSession->classroom_id));
 
             return;
         }
@@ -53,7 +55,7 @@ class LiveSession extends Component
         // Find or create SessionDevice record
         $this->sessionDevice = SessionDevice::firstOrCreate(
             [
-                'session_id' => $session->id,
+                'session_id' => $classSession->id,
                 'device_id' => $this->device->id,
             ],
             [
@@ -66,10 +68,10 @@ class LiveSession extends Component
             description: "{$user->name} joined the session.",
             userId: $user->id,
             deviceId: $this->device->id,
-            sessionId: $session->id,
+            sessionId: $classSession->id,
         );
 
-        $this->session = $session;
+        $this->classSession = $classSession;
     }
 
     #[Computed]
@@ -80,14 +82,14 @@ class LiveSession extends Component
                 'classroom.teacher',
                 'resources' => fn ($q) => $q->latest(),
             ])
-            ->findOrFail($this->session->id);
+            ->findOrFail($this->classSession->id);
     }
 
     #[Computed]
     public function announcements()
     {
         return ActivityLog::query()
-            ->where('session_id', $this->session->id)
+            ->where('session_id', $this->classSession->id)
             ->where('action', 'session.announcement')
             ->latest('created_at')
             ->take(5)
@@ -97,7 +99,7 @@ class LiveSession extends Component
     #[Computed]
     public function policy(): ?object
     {
-        return $this->session->classroom->defaultPolicy();
+        return $this->classSession->classroom->defaultPolicy();
     }
 
     #[Computed]
@@ -121,11 +123,21 @@ class LiveSession extends Component
 
     public function openResource(int $resourceId): void
     {
+        if ($this->sessionEnded || $this->classSession->fresh()->status === 'ended') {
+            $this->redirectRoute('student.dashboard', navigate: true);
+            return;
+        }
+
         $this->activeResourceId = $resourceId;
     }
 
-    public function pauseFocus(int $seconds): void
+    public function pauseFocus(int $seconds = 30): void
     {
+        if ($this->sessionEnded || $this->classSession->fresh()->status === 'ended') {
+            $this->redirectRoute('student.dashboard', navigate: true);
+            return;
+        }
+
         $this->focusPaused = true;
         $this->focusPausedSeconds = $seconds;
 
@@ -134,19 +146,24 @@ class LiveSession extends Component
             description: "Focus monitoring paused for {$seconds} seconds.",
             userId: Auth::id(),
             deviceId: $this->device?->id,
-            sessionId: $this->session->id,
+            sessionId: $this->classSession->id,
             metadata: ['seconds' => $seconds],
         );
     }
 
     public function reportViolation(string $type): ?int
     {
+        if ($this->sessionEnded || $this->classSession->fresh()->status === 'ended') {
+            $this->redirectRoute('student.dashboard', navigate: true);
+            return null;
+        }
+
         if ($this->focusPaused) {
             return null;
         }
 
         // Reload fresh session to check status
-        $freshSession = ClassSession::query()->find($this->session->id);
+        $freshSession = ClassSession::query()->find($this->classSession->id);
         if (! $freshSession || ! $freshSession->isActive()) {
             return null;
         }
@@ -181,7 +198,7 @@ class LiveSession extends Component
             description: "Focus violation ({$type}) — warning level {$warningLevel}.",
             userId: Auth::id(),
             deviceId: $this->device?->id,
-            sessionId: $this->session->id,
+            sessionId: $this->classSession->id,
             metadata: ['type' => $type, 'warning_level' => $warningLevel, 'auto_locked' => $warningLevel >= 3],
         );
 
@@ -190,14 +207,22 @@ class LiveSession extends Component
         return $warningLevel;
     }
 
+    #[On('check-session')]
+    public function checkSession(): void
+    {
+        $fresh = $this->classSession->fresh();
+        if (!$fresh || $fresh->status === 'ended') {
+            $this->redirect(route('student.dashboard'), navigate: true);
+            return;
+        }
+    }
+
     public function render()
     {
-        // Redirect if session ended during the view lifecycle
-        $freshSession = ClassSession::query()->find($this->session->id);
-        if ($freshSession && $freshSession->isEnded()) {
-            session()->flash('message', 'Session has ended.');
-
-            return $this->redirect(route('student.classrooms.show', $this->session->classroom_id));
+        $this->classSession = $this->classSession->fresh();
+        if ($this->classSession->status === 'ended') {
+            $this->sessionEnded = true;
+            return $this->redirectRoute('student.dashboard', navigate: true)->with('success', 'The session has ended.');
         }
 
         // Reload sessionDevice for fresh lock status

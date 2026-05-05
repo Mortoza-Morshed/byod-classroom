@@ -1,4 +1,4 @@
-<div id="session-workspace" wire:poll.3s class="relative min-h-screen space-y-0">
+<div id="session-workspace" wire:poll.3s="checkSession" class="relative min-h-screen space-y-0" x-data x-on:session-ended.window="window.location.href='{{ route('student.dashboard') }}'">
     {{-- ══════════════════════════════════════════════════════════ --}}
     {{-- Locked Device Overlay --}}
     {{-- ══════════════════════════════════════════════════════════ --}}
@@ -68,7 +68,7 @@
                 <div class="text-right" wire:ignore>
                     <p
                         id="student-session-timer"
-                        data-started-at="{{ $session->started_at?->toISOString() }}"
+                        data-started-at="{{ $classSession->started_at?->toISOString() }}"
                         class="font-mono text-lg font-bold text-sky-600 dark:text-sky-400"
                     >00:00:00</p>
                     <p class="text-xs text-zinc-400">Duration</p>
@@ -195,47 +195,57 @@
 
                 {{-- Active Resource Viewer — full width here gives iframe plenty of room --}}
                 @if ($activeResource)
-                    <div class="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-                        <div class="mb-3 flex items-center justify-between">
-                            <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{{ $activeResource->title }}</h2>
-                            <button wire:click="$set('activeResourceId', null)" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                                <flux:icon.x-mark class="h-4 w-4" />
-                            </button>
-                        </div>
-
-                        @if ($activeResource->rendering_mode === 'external')
-                            <div class="rounded-lg border border-amber-200 bg-amber-50 p-6 text-center dark:border-amber-700 dark:bg-amber-900/10">
-                                <flux:icon.arrow-top-right-on-square class="mx-auto mb-3 h-10 w-10 text-amber-500" />
-                                <p class="text-sm font-medium text-zinc-700 dark:text-zinc-300">This resource opens in a new tab.</p>
-                                <p class="mt-1 text-xs text-zinc-500">Focus monitoring will pause for 30 seconds.</p>
-                                <button
-                                    x-data
-                                    x-on:click="$wire.pauseFocus(30).then(() => window.open('{{ $activeResource->accessUrl() }}', '_blank'))"
-                                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-5 py-2 text-sm font-medium text-white hover:bg-amber-600"
-                                >
-                                    <flux:icon.arrow-top-right-on-square class="h-4 w-4" /> Open Link
+                    <div x-data="{ isFullscreen: false }" 
+                         :class="isFullscreen ? 'fixed inset-0 z-50 flex flex-col bg-zinc-950 p-4 sm:p-6' : 'rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900'">
+                        
+                        <div class="mb-3 flex items-center justify-between shrink-0">
+                            <h2 class="text-sm font-semibold" :class="isFullscreen ? 'text-zinc-200' : 'text-zinc-700 dark:text-zinc-300'">{{ $activeResource->title }}</h2>
+                            <div class="flex items-center gap-3">
+                                <button @click="isFullscreen = !isFullscreen" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200" title="Toggle Fullscreen">
+                                    <flux:icon.arrows-pointing-out x-show="!isFullscreen" class="h-4 w-4" />
+                                    <flux:icon.arrows-pointing-in x-show="isFullscreen" class="h-4 w-4" style="display: none;" />
+                                </button>
+                                <button wire:click="$set('activeResourceId', null)" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200" title="Close Resource">
+                                    <flux:icon.x-mark class="h-4 w-4" />
                                 </button>
                             </div>
-                        @elseif ($activeResource->rendering_mode === 'iframe')
-                            <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
-                                <iframe
-                                    src="{{ $activeResource->accessUrl() }}"
-                                    sandbox="allow-scripts allow-same-origin allow-forms"
-                                    class="h-[600px] w-full"
-                                    loading="lazy"
-                                ></iframe>
-                            </div>
-                        @elseif ($activeResource->rendering_mode === 'pdfjs')
-                            {{-- Built-in browser PDF viewer via iframe --}}
-                            <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
-                                <iframe
-                                    src="{{ $activeResource->accessUrl() }}"
-                                    class="h-[75vh] min-h-[600px] w-full"
-                                    type="application/pdf"
-                                    loading="lazy"
-                                ></iframe>
-                            </div>
-                        @endif
+                        </div>
+
+                        <div class="flex-1 min-h-0 relative">
+                            @if ($activeResource->rendering_mode === 'external')
+                                <div class="rounded-lg border border-amber-200 bg-amber-50 p-6 text-center dark:border-amber-700 dark:bg-amber-900/10 h-full flex flex-col items-center justify-center min-h-[400px]">
+                                    <flux:icon.arrow-top-right-on-square class="mx-auto mb-3 h-10 w-10 text-amber-500" />
+                                    <p class="text-sm font-medium text-zinc-700 dark:text-zinc-300">This resource opens in a new tab.</p>
+                                    <p class="mt-1 text-xs text-zinc-500">Focus monitoring will pause for 30 seconds.</p>
+                                    <button
+                                        x-data
+                                        x-on:click="$wire.pauseFocus(30).then(() => window.open('{{ $activeResource->accessUrl() }}', '_blank'))"
+                                        class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-5 py-2 text-sm font-medium text-white hover:bg-amber-600"
+                                    >
+                                        <flux:icon.arrow-top-right-on-square class="h-4 w-4" /> Open Link
+                                    </button>
+                                </div>
+                            @elseif ($activeResource->rendering_mode === 'iframe')
+                                <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700 h-full">
+                                    <iframe
+                                        src="{{ $activeResource->accessUrl() }}"
+                                        sandbox="allow-scripts allow-same-origin allow-forms"
+                                        :class="isFullscreen ? 'h-full w-full' : 'h-[600px] w-full'"
+                                        loading="lazy"
+                                    ></iframe>
+                                </div>
+                            @elseif ($activeResource->rendering_mode === 'pdfjs')
+                                {{-- Built-in browser PDF viewer via iframe --}}
+                                <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700 h-full">
+                                    <iframe
+                                        src="{{ $activeResource->accessUrl() }}"
+                                        :class="isFullscreen ? 'h-full w-full' : 'h-[600px] w-full'"
+                                        type="application/pdf"
+                                        loading="lazy"
+                                    ></iframe>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 @endif
 
@@ -359,14 +369,13 @@
 
     // Window blur — fires when student alt-tabs or clicks browser chrome
     // Small delay to avoid doubling with visibilitychange on same event
-    window.addEventListener('blur', function () {
-        setTimeout(function () {
-            // Only report if the page is still visible (alt-tab scenario)
-            // visibilitychange will catch the tab-switch case
-            if (!document.hidden && !document.hasFocus()) {
-                maybeReportViolation('window_blur');
-            }
-        }, 200);
+    window.addEventListener('blur', () => {
+        // If the focus moved to an iframe inside our own page, do NOT report a violation!
+        // This is crucial because clicking inside a cross-origin iframe fires a window blur.
+        if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+            return;
+        }
+        maybeReportViolation('window_blur');
     });
 
     // Fullscreen enforcement
