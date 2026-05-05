@@ -124,7 +124,7 @@ class LiveSession extends Component
     public function openResource(int $resourceId): void
     {
         if ($this->sessionEnded || $this->classSession->fresh()->status === 'ended') {
-            $this->redirectRoute('student.dashboard', navigate: true);
+            $this->redirect(route('student.sessions.summary', $this->classSession), navigate: true);
             return;
         }
 
@@ -134,7 +134,7 @@ class LiveSession extends Component
     public function pauseFocus(int $seconds = 30): void
     {
         if ($this->sessionEnded || $this->classSession->fresh()->status === 'ended') {
-            $this->redirectRoute('student.dashboard', navigate: true);
+            $this->redirect(route('student.sessions.summary', $this->classSession), navigate: true);
             return;
         }
 
@@ -154,7 +154,7 @@ class LiveSession extends Component
     public function reportViolation(string $type): ?int
     {
         if ($this->sessionEnded || $this->classSession->fresh()->status === 'ended') {
-            $this->redirectRoute('student.dashboard', navigate: true);
+            $this->redirect(route('student.sessions.summary', $this->classSession), navigate: true);
             return null;
         }
 
@@ -212,7 +212,7 @@ class LiveSession extends Component
     {
         $fresh = $this->classSession->fresh();
         if (!$fresh || $fresh->status === 'ended') {
-            $this->redirect(route('student.dashboard'), navigate: true);
+            $this->redirect(route('student.sessions.summary', $this->classSession), navigate: true);
             return;
         }
     }
@@ -222,7 +222,7 @@ class LiveSession extends Component
         $this->classSession = $this->classSession->fresh();
         if ($this->classSession->status === 'ended') {
             $this->sessionEnded = true;
-            return $this->redirectRoute('student.dashboard', navigate: true)->with('success', 'The session has ended.');
+            return $this->redirect(route('student.sessions.summary', $this->classSession), navigate: true);
         }
 
         // Reload sessionDevice for fresh lock status

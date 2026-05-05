@@ -162,9 +162,16 @@ Route::prefix('student')
         })->name('join');
 
         // Active session view
-        Route::get('/sessions/{session}/live', function (ClassSession $session) {
+        Route::get('/sessions/{session}/live', function (App\Models\ClassSession $session) {
             return view('pages.student.sessions.live', compact('session'));
         })->name('sessions.live');
+
+        Route::get('/sessions/{session}/summary', 
+            function (App\Models\ClassSession $session) {
+                return view('pages.student.sessions.summary', 
+                    compact('session'));
+            }
+        )->name('sessions.summary');
 
         // Device registration
         Route::get('/device', function () {

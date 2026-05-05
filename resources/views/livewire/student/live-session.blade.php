@@ -1,4 +1,4 @@
-<div id="session-workspace" wire:poll.3s="checkSession" class="relative flex flex-col space-y-0 -mt-2 -mb-6" x-data x-on:session-ended.window="window.location.href='{{ route('student.dashboard') }}'">
+<div id="session-workspace" wire:poll.3s="checkSession" class="relative flex flex-col space-y-0 -mt-2 -mb-6" x-data x-on:session-ended.window="window.location.href='{{ route('student.sessions.summary', $classSession) }}'">
     {{-- ══════════════════════════════════════════════════════════ --}}
     {{-- Locked Device Overlay --}}
     {{-- ══════════════════════════════════════════════════════════ --}}

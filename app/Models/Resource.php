@@ -21,6 +21,8 @@ class Resource extends Model
         'rendering_mode',
     ];
 
+    protected $appends = ['access_url'];
+
     // ── Relationships ────────────────────────────────────────────
 
     public function session(): BelongsTo
@@ -34,6 +36,11 @@ class Resource extends Model
     }
 
     // ── Helpers ──────────────────────────────────────────────────
+
+    public function getAccessUrlAttribute(): string
+    {
+        return $this->accessUrl();
+    }
 
     public function isFile(): bool
     {
