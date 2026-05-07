@@ -1,16 +1,16 @@
 <x-layouts.app :title="$title ?? 'Student'">
 
-    <flux:sidebar sticky stashable class="bg-white dark:bg-zinc-800 border-r border-zinc-200 dark:border-zinc-700">
+    <flux:sidebar sticky stashable class="bg-[#111111] border-r border-[#2a2a2a]">
 
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-        <div class="flex items-center gap-3 px-4 py-5 border-b border-zinc-200 dark:border-zinc-700">
-            <div class="w-8 h-8 bg-sky-600 rounded-lg flex items-center justify-center">
-                <flux:icon.user class="w-5 h-5 text-white" />
+        <div class="flex items-center gap-3 px-4 py-5 border-b border-[#2a2a2a]">
+            <div class="w-8 h-8 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(14,165,233,0.15)]">
+                <flux:icon.user class="w-5 h-5 text-sky-400" />
             </div>
             <div>
-                <p class="text-sm font-semibold text-zinc-900 dark:text-white">Student Portal</p>
-                <p class="text-xs text-zinc-500">{{ auth()->user()->name }}</p>
+                <p class="text-sm font-bold text-[#ededed]">Student Portal</p>
+                <p class="text-xs text-[#a1a1a1]">{{ auth()->user()->name }}</p>
             </div>
         </div>
 
@@ -32,11 +32,11 @@
             </flux:navlist.group>
         </flux:navlist>
 
-        <div class="mt-auto px-4 py-4 border-t border-zinc-200 dark:border-zinc-700">
+        <div class="mt-auto px-4 py-4 border-t border-[#2a2a2a]">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors w-full">
-                    <flux:icon.arrow-left-start-on-rectangle class="w-4 h-4" />
+                <button type="submit" class="flex items-center gap-2 text-sm text-[#a1a1a1] hover:text-[#ededed] transition-colors w-full font-medium">
+                    <flux:icon.arrow-left-start-on-rectangle class="w-4 h-4 text-[#666666]" />
                     Logout
                 </button>
             </form>
@@ -45,14 +45,14 @@
     </flux:sidebar>
 
     <flux:main>
-        <header class="sticky top-0 z-10 bg-white dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700 px-6 py-4 flex items-center justify-between mb-6">
+        <header class="sticky top-0 z-10 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
                 <flux:sidebar.toggle class="lg:hidden" icon="bars-3" />
-                <h1 class="text-lg font-semibold text-zinc-900 dark:text-white">{{ $title ?? 'Dashboard' }}</h1>
+                <h1 class="text-lg font-bold text-[#ededed]">{{ $title ?? 'Dashboard' }}</h1>
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-xs bg-sky-100 text-sky-700 px-2 py-1 rounded-full font-medium">Student</span>
-                <span class="text-sm text-zinc-600 dark:text-zinc-400">{{ auth()->user()->name }}</span>
+                <span class="text-[10px] bg-sky-500/10 border border-sky-500/20 text-sky-400 px-2.5 py-1 rounded-full font-bold uppercase tracking-widest">Student</span>
+                <span class="text-sm font-semibold text-[#a1a1a1]">{{ auth()->user()->name }}</span>
             </div>
         </header>
 
